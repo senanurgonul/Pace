@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Aday Sınav Planlama Paneli</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 40px;
+            background-color: #f9fafb;
+            color: #333;
+        }
+
+        h1, h3 {
+            text-align: center;
+        }
+
+        form {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        input[type="date"], input[type="submit"], .download-btn {
+            padding: 8px 12px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+
+        input[type="submit"], .download-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            margin-top: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .graph-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .graph-container {
+            width: 30%;
+            min-width: 250px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            background-color: white;
+        }
+
+        .graph-container:hover {
+            transform: scale(1.03);
+        }
+
+        .graph-container img {
+            width: 100%;
+            display: block;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            padding-top: 60px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 800px;
+        }
+
+        .close {
+            position: absolute;
+            top: 30px;
+            right: 60px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .download-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .graph-row {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .graph-container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>📅 Aday Sınav Planlama Paneli</h1>
+
+    <form method="post">
+        <label>Başlangıç Tarihi: </label>
+        <input type="date" name="start_date" required>
+        <label>Bitiş Tarihi: </label>
+        <input type="date" name="end_date" required>
+        <input type="submit" value="Tahmin Et">
+    </form>
+
+    {% if secilen_aralik %}
+        <h3>📆 Seçilen Tarih Aralığı: {{ secilen_aralik }}</h3>
+    {% endif %}
+
+    {% if tahminler %}
+        <div class="download-container">
+            <a href="/indir" class="download-btn">⬇️ Excel İndir</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tarih</th>
+                    <th>Gün</th>
+                    <th>Davet Edilen</th>
+                    <th>Teyit Veren</th>
+                    <th>Teyit Vermeyen</th>
+                    <th>Sınava Katılacak</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in tahminler %}
+                <tr>
+                    <td>{{ row["Tarih"] }}</td>
+                    <td>{{ row["Gün"] }}</td>
+                    <td>{{ row["Davet Edilen"] }}</td>
+                    <td>{{ row["Teyit Veren"] }}</td>
+                    <td>{{ row["Teyit Vermeyen"] }}</td>
+                    <td>{{ row["Sınava Katılacak"] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="graph-row">
+            {% if grafik1 %}
+            <div class="graph-container" onclick="openModal('modal1')">
+                <img src="data:image/png;base64,{{ grafik1 }}" alt="Günlük Dağılım">
+            </div>
+            {% endif %}
+
+            {% if grafik2 %}
+            <div class="graph-container" onclick="openModal('modal2')">
+                <img src="data:image/png;base64,{{ grafik2 }}" alt="Kümülatif Dağılım">
+            </div>
+            {% endif %}
+
+            {% if grafik3 %}
+            <div class="graph-container" onclick="openModal('modal3')">
+                <img src="data:image/png;base64,{{ grafik3 }}" alt="Salon Kullanım">
+            </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Modals -->
+    <div id="modal1" class="modal">
+        <span class="close" onclick="closeModal('modal1')">&times;</span>
+        <img class="modal-content" src="data:image/png;base64,{{ grafik1 }}">
+    </div>
+    <div id="modal2" class="modal">
+        <span class="close" onclick="closeModal('modal2')">&times;</span>
+        <img class="modal-content" src="data:image/png;base64,{{ grafik2 }}">
+    </div>
+    <div id="modal3" class="modal">
+        <span class="close" onclick="closeModal('modal3')">&times;</span>
+        <img class="modal-content" src="data:image/png;base64,{{ grafik3 }}">
+    </div>
+
+    <script>
+        function openModal(id) {
+            document.getElementById(id).style.display = "block";
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = "none";
+        }
+    </script>
+</body>
+</html>
