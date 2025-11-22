@@ -14,6 +14,22 @@ To answer this, Pace uses a multi-model ML architecture and a custom optimizatio
 
 ---
 
+##  Project Context — Developed During My Turkish Airlines Internship
+
+This project was originally developed during my **Software Engineering Internship at Turkish Airlines**, specifically for the **Cockpit Recruitment & Assessment Operations** team.
+
+The objective was to enhance the efficiency of the cockpit hiring process by building a **machine learning–driven attendance forecasting system** capable of predicting daily candidate turnout with high accuracy.  
+By modeling historical invitation, confirmation, and attendance behavior, the system helped HR teams better plan daily exam capacity and make data-informed scheduling decisions.
+
+Through this project, I transformed raw operational data into an **AI-powered decision-support tool**, enabling the team to:
+- Optimize daily invitation planning  
+- Reduce no-show uncertainty  
+- Ensure more stable and efficient exam-day capacity management  
+
+This work provided a meaningful contribution to the operational flow of Turkish Airlines’ cockpit recruitment process.
+
+---
+
 ##  Machine Learning Approach  
 Pace uses **Random Forest Regression**, a powerful ensemble method that reduces variance and captures non-linear interactions within temporal data.
 
